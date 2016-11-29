@@ -4,39 +4,41 @@ using System.Linq;
 using System.Web;
 using MySql.Data.MySqlClient;
 using STWebService.Model;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace STWebService
 {
     public class DBOperation
     {
-         public static MySqlConnection sqlCon;  //用于连接数据库  
-  
+        public static MySqlConnection sqlCon;  //用于连接数据库  
+
         //将下面的引号之间的内容换成上面记录下的属性中的连接字符串  
-         private String ConServerStr = @"server=121.42.12.186;user id=USER;Port=3306;database=stproject;";  
-          
+        private String ConServerStr = @"server=121.42.12.186;user id=USER;Port=3306;database=stproject;";
+
         //默认构造函数  
-        public DBOperation()  
-        {  
-            if (sqlCon == null)  
-            {  
-                sqlCon = new MySqlConnection();  
-                sqlCon.ConnectionString = ConServerStr;  
-                sqlCon.Open();  
-            }  
-        }  
-           
+        public DBOperation()
+        {
+            if (sqlCon == null)
+            {
+                sqlCon = new MySqlConnection();
+                sqlCon.ConnectionString = ConServerStr;
+                sqlCon.Open();
+            }
+        }
+
         //关闭/销毁函数，相当于Close()  
-        public void Dispose()  
-        {  
-            if (sqlCon != null)  
-            {  
-                sqlCon.Close();  
-                sqlCon = null;  
-            }  
-        }  
+        public void Dispose()
+        {
+            if (sqlCon != null)
+            {
+                sqlCon.Close();
+                sqlCon = null;
+            }
+        }
 
         //jin yong yu ce shi
-        public List<UserModel>selectAllUser()
+        public List<UserModel> selectAllUser()
         {
             List<UserModel> list = new List<UserModel>();
             string sql = "select * from user";
@@ -67,7 +69,7 @@ namespace STWebService
             }
             catch (Exception)
             {
-                
+
             }
             return list;
 
@@ -83,14 +85,14 @@ namespace STWebService
                 MySqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    result = Int32.Parse(reader[0].ToString()); 
+                    result = Int32.Parse(reader[0].ToString());
                 }
                 reader.Close();
                 cmd.Dispose();
             }
-            catch(Exception)
+            catch (Exception)
             {
-                
+
             }
             return result;
         }
@@ -138,7 +140,7 @@ namespace STWebService
             }
             return result;
         }
-        
+
         public List<string> queryUser(String nickname)
         {
             List<string> list = new List<string>();
@@ -167,11 +169,11 @@ namespace STWebService
                 }
                 reader.Close();
                 cmd.Dispose();
-                
+
             }
             catch (Exception)
             {
-                
+
             }
             return list;
         }
@@ -191,9 +193,9 @@ namespace STWebService
                 }
                 reader.Close();
                 cmd.Dispose();
-                
+
             }
-            catch(Exception)
+            catch (Exception)
             {
 
             }
@@ -222,8 +224,8 @@ namespace STWebService
             }
             finally
             {
-                
-                
+
+
             }
             return result;
         }
@@ -233,12 +235,12 @@ namespace STWebService
             List<Model.StoryModel> list = new List<Model.StoryModel>();
             try
             {
-                string sql = "select story_id,title,content,state,mshow,edittime from story where user_id = '" 
+                string sql = "select story_id,title,content,state,mshow,edittime from story where user_id = '"
                     + user_id + "'";
                 MySqlCommand cmd = new MySqlCommand(sql, sqlCon);
                 MySqlDataReader reader = cmd.ExecuteReader();
                 Model.StoryModel sm = null;
-                if(reader.HasRows)
+                if (reader.HasRows)
                 {
                     while (reader.Read())
                     {
@@ -249,11 +251,11 @@ namespace STWebService
                         sm.state = reader[3].ToString().ElementAt(0);
                         sm.mshow = reader[4].ToString().ElementAt(0);
                         string date = reader[5].ToString();
-                        if(date != "")
+                        if (date != "")
                         {
                             sm.editTime = DateTime.Parse(date);
                         }
-                        
+
                         list.Add(sm);
                     }
                 }
@@ -348,7 +350,7 @@ namespace STWebService
             bool result = false;
             try
             {
-                string sql = "select story.story_id from story,user where story_id = '" + st_id + 
+                string sql = "select story.story_id from story,user where story_id = '" + st_id +
                     "' and story.user_id = user.user_id = '" + user_id + "' and user.password = '" + password + "'";
                 MySqlCommand cmd = new MySqlCommand(sql, sqlCon);
                 MySqlDataReader reader = cmd.ExecuteReader();
@@ -391,11 +393,11 @@ namespace STWebService
             return result;
         }
 
-        public bool insertUser(String user_id,String password,String nickname)
+        public bool insertUser(String user_id, String password, String nickname)
         {
             try
             {
-                string sql = "insert into user(user_id,password,nickname) values(" + "'" + user_id + "','" + password + "','"+ nickname + "')";
+                string sql = "insert into user(user_id,password,nickname) values(" + "'" + user_id + "','" + password + "','" + nickname + "')";
                 MySqlCommand cmd = new MySqlCommand(sql, sqlCon);
                 cmd.ExecuteNonQuery();
                 cmd.Dispose();
@@ -408,11 +410,11 @@ namespace STWebService
             }
         }
 
-        public bool insertUser(String user_id, String password, String nickname,String gender,DateTime birtbady)
+        public bool insertUser(String user_id, String password, String nickname, String gender, DateTime birtbady)
         {
             try
             {
-                string sql = "insert into user(user_id,password,nickname,birthday,gender) values(" + "'" + user_id + "','" + password + "','" 
+                string sql = "insert into user(user_id,password,nickname,birthday,gender) values(" + "'" + user_id + "','" + password + "','"
                     + nickname + "','" + birtbady + "','" + gender + "')";
                 MySqlCommand cmd = new MySqlCommand(sql, sqlCon);
                 cmd.ExecuteNonQuery();
@@ -443,7 +445,7 @@ namespace STWebService
             }
         }
 
-        public bool insertUserSecurity(String user_id,String phone_num)
+        public bool insertUserSecurity(String user_id, String phone_num)
         {
             try
             {
@@ -464,8 +466,8 @@ namespace STWebService
         {
             try
             {
-                string sql = "insert into story (story_id,user_id,title,content,edittime) values('" + sm.story_id + "','" + sm.user_id + "','" 
-                    + sm.title + "','" + sm.content + "','" + DateTime.Now.ToString() +"')";
+                string sql = "insert into story (story_id,user_id,title,content,edittime) values('" + sm.story_id + "','" + sm.user_id + "','"
+                    + sm.title + "','" + sm.content + "','" + DateTime.Now.ToString() + "')";
                 MySqlCommand cmd = new MySqlCommand(sql, sqlCon);
                 cmd.ExecuteNonQuery();
                 cmd.Dispose();
@@ -495,7 +497,7 @@ namespace STWebService
                 return false;
             }
         }
-  
+
         public bool deleteUserSecurity(String user_id)
         {
             try
@@ -530,12 +532,12 @@ namespace STWebService
             }
         }
 
-        public bool queryExistUser(String user_id,String password)
+        public bool queryExistUser(String user_id, String password)
         {
             bool result = false;
             try
             {
-                string sql = "select * from user where user_id = '" + user_id + "' and password = '" + password +"';";
+                string sql = "select * from user where user_id = '" + user_id + "' and password = '" + password + "';";
                 MySqlCommand cmd = new MySqlCommand(sql, sqlCon);
                 MySqlDataReader reader = cmd.ExecuteReader();
                 reader.Read();
@@ -548,7 +550,7 @@ namespace STWebService
             }
             catch (Exception e)
             {
-                
+
             }
             return result;
         }
@@ -564,16 +566,16 @@ namespace STWebService
         {
             try
             {
-                string sql = "update USER set password = '" + model.password + "',slogan = '" + model.slogan + 
-                    "',birthday = '" + model.birthday.Date.ToString() +"',occupation = '" + model.occupation +
-                    "',gender = '" + model.gender + "',address = '" + model.address + "' where user_id = '" + 
+                string sql = "update USER set password = '" + model.password + "',slogan = '" + model.slogan +
+                    "',birthday = '" + model.birthday.Date.ToString() + "',occupation = '" + model.occupation +
+                    "',gender = '" + model.gender + "',address = '" + model.address + "' where user_id = '" +
                     model.user_id + "'";
                 MySqlCommand cmd = new MySqlCommand(sql, sqlCon);
                 cmd.ExecuteNonQuery();
                 cmd.Dispose();
                 return true;
             }
-            catch(Exception)
+            catch (Exception)
             {
 
             }
@@ -590,7 +592,7 @@ namespace STWebService
         {
             try
             {
-                string sql = "update story set title = '" + sm.title + "',content = '" + sm.content + "',edittime = '" 
+                string sql = "update story set title = '" + sm.title + "',content = '" + sm.content + "',edittime = '"
                     + DateTime.Now.ToString() + "' where story_id = '" + sm.story_id + "'";
                 MySqlCommand cmd = new MySqlCommand(sql, sqlCon);
                 cmd.ExecuteNonQuery();
@@ -626,7 +628,7 @@ namespace STWebService
             try
             {
                 string sql = "update house set city_id = '" + hm.city_id + "',address = '" + hm.address + "',limitation = '"
-                    + hm.limitation + "',info = '" +hm.info + "' where house_id = '" + hm.house_id + "'";
+                    + hm.limitation + "',info = '" + hm.info + "' where house_id = '" + hm.house_id + "'";
                 MySqlCommand cmd = new MySqlCommand(sql, sqlCon);
                 cmd.ExecuteNonQuery();
                 cmd.Dispose();
@@ -634,7 +636,7 @@ namespace STWebService
             }
             catch (Exception e)
             {
-                
+
             }
             return false;
         }
@@ -655,6 +657,63 @@ namespace STWebService
             }
             return false;
         }
-    }  
 
+        ///Test for img management
+        ///select pic
+        public string selectImg(int img_id)
+        {
+            string result=null;
+            string sql = "SELECT IMG FROM imgtest WHERE IMG_ID=" +img_id;
+            MySqlCommand comm = new MySqlCommand(sql, sqlCon);
+            MySqlDataReader dr = comm.ExecuteReader();
+            if (dr.Read())
+            {
+
+
+                //读出图片字节数组至byte[] 
+                byte[] imageByte = new byte[dr.GetBytes(0, 0, null, 0, int.MaxValue)];
+                dr.GetBytes(0, 0, imageByte, 0, imageByte.Length);
+                //将图片字节数组加载入缓冲流 
+                MemoryStream imageStream = new MemoryStream(imageByte);
+                byte[] bytes = new byte[imageStream.Length];
+                
+                imageStream.Position = 0;
+                imageStream.Read(bytes, 0, (int)imageStream.Length);
+                imageStream.Close();
+                result=Convert.ToBase64String(bytes);
+              
+            }
+            dr.Dispose();
+            comm.Dispose();
+
+            return result;
+
+        }
+        ///insert pic
+            public bool insertImg(byte[] fileBytes)
+              {
+                  if (fileBytes != null)
+                  {
+
+                      string insertStr = "INSERT INTO `imgtest`(`IMG_ID`, `IMG`) VALUES (34,?imageByte)";
+                      MySqlCommand comm = new MySqlCommand(insertStr, sqlCon);
+
+                      //设置数据库字段类型MediumBlob的值为图片字节数组imageByte 
+                      comm.Parameters.Add(new MySqlParameter("?imageByte", MySqlDbType.MediumBlob)).Value = fileBytes;
+                      //执行命令 
+                      try
+                      {
+                          comm.ExecuteNonQuery();
+                          comm.Dispose();
+                          return true;
+                      }
+                      catch (Exception ex)
+                      {
+
+                      }
+                  }
+              return false;
+              }
+
+    }
 }

@@ -286,5 +286,17 @@ namespace STWebService
         {
             return false;
         }
+        [WebMethod(Description = "Insert Picture")]
+        public bool insertImg(string image)
+        {
+            image = dbOperation.selectImg(123);
+            byte[] buffer = Convert.FromBase64String(image);
+            if (buffer != null)
+            {
+                //return true;
+                return dbOperation.insertImg(buffer);
+            }
+            return false;
+        }
     }
 }
